@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{fragments/layout :: header_head('Nâng cấp Bác sĩ')}"></head>
+    <style>
+        .card-upgrade { border-radius: 12px; }
+        .form-control { border-radius: 8px; }
+    </style>
     <body>
         <div class="container-fluid">
             <div class="row">
@@ -8,36 +12,59 @@
                 <main class="col-md-10 ml-sm-auto px-4 pt-4">
                     <div class="row justify-content-center">
                         <div class="col-md-8">
-                            <div class="card shadow-sm border-0">
+                            <div class="card shadow-sm border-0 card-upgrade">
                                 <div class="card-header bg-white py-3">
                                     <h4 class="mb-0 text-primary"><i class="fas fa-user-md mr-2"></i>Bổ sung thông tin bác sĩ</h4>
                                 </div>
-                                <div class="card-body">
-                                    <form th:action="@{/admin/users/upgrade}" th:object="${upgradeRequest}" method="post">
-                                        <input type="hidden" name="userId" th:value="${userId}">
+                                <div class="card-body p-4">
+                                    <!-- Thông báo lỗi từ server nếu có -->
+                                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
+                                    <form th:action="@{/admin/users/upgrade}" th:object="${upgradeRequest}" method="post">
+                                        <!-- Quan trọng: Dùng th:field để bind userId ẩn -->
+                                        <input type="hidden" th:field="*{userId}">
+
+                                        <!-- CHUYÊN KHOA -->
                                         <div class="form-group">
                                             <label class="font-weight-bold">Chuyên khoa</label>
-                                            <select th:field="*{specialtyId}" class="form-control" required>
+                                            <select th:field="*{specialtyId}"
+                                                    class="form-control"
+                                                    th:classappend="${#fields.hasErrors('specialtyId')} ? 'is-invalid' : ''">
                                                 <option value="">-- Chọn chuyên khoa --</option>
-                                                <option th:each="sp : ${specialties}" th:value="${sp.id}" th:text="${sp.name}"></option>
+                                                <option th:each="sp : ${specialties}"
+                                                        th:value="${sp.id}"
+                                                        th:text="${sp.name}"></option>
                                             </select>
+                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('specialtyId')}"
+                                                 th:errors="*{specialtyId}"></div>
                                         </div>
 
+                                        <!-- KINH NGHIỆM -->
                                         <div class="form-group">
                                             <label class="font-weight-bold">Số năm kinh nghiệm</label>
-                                            <input type="number" th:field="*{experienceYears}" class="form-control" min="0" placeholder="VD: 5">
+                                            <input type="number" th:field="*{experienceYears}"
+                                                   class="form-control"
+                                                   placeholder="VD: 5"
+                                                   th:classappend="${#fields.hasErrors('experienceYears')} ? 'is-invalid' : ''">
+                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('experienceYears')}"
+                                                 th:errors="*{experienceYears}"></div>
                                         </div>
 
+                                        <!-- TIỂU SỬ -->
                                         <div class="form-group">
                                             <label class="font-weight-bold">Tiểu sử / Giới thiệu</label>
-                                            <textarea th:field="*{bio}" class="form-control" rows="4" placeholder="Giới thiệu ngắn về trình độ chuyên môn..."></textarea>
+                                            <textarea th:field="*{bio}"
+                                                      class="form-control" rows="4"
+                                                      placeholder="Giới thiệu ngắn về trình độ chuyên môn..."
+                                                      th:classappend="${#fields.hasErrors('bio')} ? 'is-invalid' : ''"></textarea>
+                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('bio')}"
+                                                 th:errors="*{bio}"></div>
                                         </div>
 
-                                        <hr>
+                                        <hr class="my-4">
                                         <div class="d-flex justify-content-between">
-                                            <a th:href="@{/admin/users}" class="btn btn-secondary">Hủy bỏ</a>
-                                            <button type="submit" class="btn btn-success px-5 shadow-sm">
+                                            <a th:href="@{/admin/users}" class="btn btn-light px-4">Hủy bỏ</a>
+                                            <button type="submit" class="btn btn-primary px-5 shadow-sm">
                                                 <i class="fas fa-check-circle mr-2"></i>Xác nhận nâng cấp
                                             </button>
                                         </div>

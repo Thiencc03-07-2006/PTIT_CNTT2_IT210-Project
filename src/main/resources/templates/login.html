@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Đăng nhập - Smart Healthcare</title>
+        <!-- Bootstrap 4.6.2 CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <style>
+            body {
+                background-color: #f4f7f6;
+            }
+
+            .card-login {
+                margin-top: 100px;
+                border: none;
+                border-radius: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <div class="card card-login shadow-sm p-4">
+                        <div class="card-body">
+                            <h3 class="text-center text-primary font-weight-bold mb-4">Hệ Thống Y Tế</h3>
+
+                            <div th:if="${param.error}" class="alert alert-danger small">
+                                Sai tên đăng nhập hoặc mật khẩu!
+                            </div>
+
+                            <form th:action="@{/login}" th:object="${loginDto}" method="post">
+                                <div class="form-group">
+                                    <label>Tên đăng nhập</label>
+                                    <input type="text" name="username" class="form-control"
+                                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
+                                         th:errors="*{username}">
+                                        Lỗi username
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mật khẩu</label>
+                                    <input type="password" name="password" class="form-control"
+                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                                         th:errors="*{password}">
+                                        Lỗi password
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block mt-4">Đăng nhập</button>
+                            </form>
+                            <p class="text-center mt-3 small">
+                                Chưa có tài khoản? <a th:href="@{/register}" class="text-primary font-weight-bold">Đăng ký tại đây</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Đăng ký tài khoản - Smart Healthcare</title>
+        <!-- Bootstrap 4.6.2 CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <style>
+            body {
+                background-color: #f4f7f6;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+            }
+
+            .card-register {
+                border: none;
+                border-radius: 12px;
+            }
+
+            .text-primary-custom {
+                color: #007bff;
+            }
+
+            .form-control {
+                border-radius: 8px;
+            }
+
+            .btn-register {
+                border-radius: 8px;
+                padding: 12px;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body class="bg-light">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="card card-register shadow-sm">
+                        <div class="card-body p-5">
+                            <h3 class="text-center text-primary font-weight-bold mb-4">Tạo Tài Khoản Mới</h3>
+
+                            <!-- Báo lỗi chung -->
+                            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                                <span th:text="${errorMessage}"></span>
+                            </div>
+
+                            <form th:action="@{/register}" th:object="${userDto}" method="post">
+                                <input type="hidden" th:field="*{role}">
+                                <div class="form-row">
+                                    <!-- USERNAME -->
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold">Tên đăng nhập</label>
+                                        <input type="text" class="form-control" placeholder="VD: nguyenvanan"
+                                               th:field="*{username}"
+                                               th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
+                                             th:errors="*{username}"></div>
+                                    </div>
+
+                                    <!-- PASSWORD -->
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold">Mật khẩu</label>
+                                        <input type="password" class="form-control" placeholder="********"
+                                               th:field="*{password}"
+                                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                                             th:errors="*{password}"></div>
+                                    </div>
+                                </div>
+
+                                <!-- FULLNAME -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Họ và tên</label>
+                                    <input type="text" class="form-control" placeholder="Nhập đầy đủ họ tên"
+                                           th:field="*{fullName}"
+                                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}"
+                                         th:errors="*{fullName}"></div>
+                                </div>
+
+                                <div class="form-row">
+                                    <!-- PHONE -->
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold">Số điện thoại</label>
+                                        <input type="text" class="form-control" placeholder="0987654321"
+                                               th:field="*{phone}"
+                                               th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}"
+                                             th:errors="*{phone}"></div>
+                                    </div>
+
+                                    <!-- GENDER -->
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold">Giới tính</label>
+                                        <select class="form-control" th:field="*{gender}"
+                                                th:classappend="${#fields.hasErrors('gender')} ? 'is-invalid' : ''">
+                                            <option value="">-- Chọn giới tính --</option>
+                                            <option value="MALE">Nam</option>
+                                            <option value="FEMALE">Nữ</option>
+                                            <option value="OTHER">Khác</option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('gender')}"
+                                             th:errors="*{gender}"></div>
+                                    </div>
+                                </div>
+
+<!--                                &lt;!&ndash; ROLE &ndash;&gt;-->
+<!--                                <div class="form-group">-->
+<!--                                    <label class="font-weight-bold">Vai trò người dùng</label>-->
+<!--                                    <select class="form-control" th:field="*{role}"-->
+<!--                                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">-->
+<!--                                        <option value="PATIENT">Bệnh nhân (Đặt lịch & Xem bệnh án)</option>-->
+<!--                                        <option value="DOCTOR">Bác sĩ (Khám bệnh & Kê đơn)</option>-->
+<!--                                    </select>-->
+<!--                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}"-->
+<!--                                         th:errors="*{role}"></div>-->
+<!--                                    <small class="form-text text-muted">Lưu ý: Quyền hạn sẽ được áp dụng ngay sau khi-->
+<!--                                        đăng ký.</small>-->
+<!--                                </div>-->
+
+                                <button type="submit" class="btn btn-primary btn-block shadow-sm mt-4 btn-register">
+                                    Đăng ký ngay
+                                </button>
+                            </form>
+
+                            <hr>
+                            <p class="text-center mt-3 small">
+                                Đã có tài khoản? <a th:href="@{/login}" class="text-primary font-weight-bold">Đăng nhập
+                                tại đây</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: header_head('Lịch khám hôm nay')}">
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar với activePage = 'schedule' -->
+                <nav th:replace="~{fragments/layout :: sidebar('schedule')}"></nav>
+
+                <main class="col-md-10 ml-sm-auto px-4 pt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="text-primary"><i class="fas fa-calendar-day mr-2"></i>Lịch khám hôm nay</h3>
+                        <div class="text-muted">
+                            <i class="far fa-clock"></i> <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Thông báo -->
+                    <div th:if="${message}" class="alert alert-success alert-dismissible fade show">
+                        <span th:text="${message}"></span>
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <table class="table table-hover mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Bệnh nhân</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Ghi chú bệnh nhân</th>
+                                        <th>Trạng thái</th>
+                                        <th class="text-center">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="ap : ${appointments}">
+                                        <td class="font-weight-bold text-primary" th:text="${ap.timeSlot}">08:00</td>
+                                        <td>
+                                            <div th:text="${ap.patient.profile.fullName}" class="font-weight-bold">Nguyễn Văn A</div>
+                                            <small class="text-muted" th:text="'ID: #' + ${ap.id}"></small>
+                                        </td>
+                                        <td th:text="${ap.patient.profile.phone}">0987654321</td>
+                                        <td class="text-truncate" style="max-width: 200px;" th:text="${ap.notes}">Đau bụng nhẹ...</td>
+                                        <td>
+                                            <!-- Badge trạng thái -->
+                                            <span th:if="${ap.status.name() == 'PENDING'}" class="badge badge-warning">Chờ khám</span>
+                                            <span th:if="${ap.status.name() == 'IN_PROGRESS'}" class="badge badge-info">Đang khám</span>
+                                            <span th:if="${ap.status.name() == 'COMPLETED'}" class="badge badge-success">Hoàn thành</span>
+                                            <span th:if="${ap.status.name() == 'CANCELLED'}" class="badge badge-danger">Đã hủy</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <!-- Chỉ hiện nút Khám bệnh nếu chưa hoàn thành hoặc chưa hủy -->
+                                            <a th:if="${ap.status.name() == 'PENDING' || ap.status.name() == 'IN_PROGRESS'}"
+                                               th:href="@{/doctor/appointments/complete/{id}(id=${ap.id})}"
+                                               class="btn btn-primary btn-sm shadow-sm">
+                                                <i class="fas fa-stethoscope"></i> Khám bệnh
+                                            </a>
+                                            <button th:if="${ap.status.name() == 'COMPLETED'}" class="btn btn-light btn-sm" disabled>
+                                                <i class="fas fa-check"></i> Đã xong
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(appointments)}">
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                            <p>Hôm nay bạn không có lịch hẹn nào.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

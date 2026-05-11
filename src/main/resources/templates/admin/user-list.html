@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: header_head('Quản lý người dùng')}">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sử dụng sidebar với activePage là 'users' -->
+                <nav th:replace="~{fragments/layout :: sidebar('users')}"></nav>
+
+                <main class="col-md-10 ml-sm-auto px-4 pt-4">
+                    <div class="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom">
+                        <h1 class="h2 text-primary"><i class="fas fa-user-shield mr-2"></i>Quản lý người dùng</h1>
+                    </div>
+
+                    <!-- Thông báo -->
+                    <div th:if="${message}" class="alert alert-success shadow-sm" th:text="${message}"></div>
+                    <div th:if="${error}" class="alert alert-danger shadow-sm" th:text="${error}"></div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-0">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Họ tên</th>
+                                        <th>Username</th>
+                                        <th>Vai trò hiện tại</th>
+                                        <th>Thay đổi vai trò</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="u : ${users}">
+                                        <td class="align-middle" th:text="${u.id}">1</td>
+                                        <td class="align-middle">
+                                            <div class="font-weight-bold"
+                                                 th:text="${u.profile != null ? u.profile.fullName : 'Chưa cập nhật'}"></div>
+                                            <small class="text-muted"
+                                                   th:text="${u.profile != null ? u.profile.phone : ''}"></small>
+                                        </td>
+                                        <td class="align-middle" th:text="${u.username}">user123</td>
+                                        <td class="align-middle">
+                                        <span th:classappend="${u.role.name() == 'ADMIN' ? 'badge badge-danger' :
+                                                          (u.role.name() == 'DOCTOR' ? 'badge badge-info' : 'badge badge-secondary')}"
+                                              class="badge p-2" th:text="${u.role}">
+                                        </span>
+                                        </td>
+                                        <!-- Thay thế đoạn Form đổi role cũ bằng logic này -->
+                                        <td class="align-middle text-right">
+                                            <!-- Nếu là Patient thì hiện nút Nâng cấp -->
+                                            <a th:if="${u.role.name() == 'PATIENT'}"
+                                               th:href="@{/admin/users/upgrade/{id}(id=${u.id})}"
+                                               class="btn btn-sm btn-outline-info shadow-sm">
+                                                <i class="fas fa-arrow-up mr-1"></i> Nâng cấp Bác sĩ
+                                            </a>
+
+                                            <!-- Nếu đã là Doctor thì có thể hiện nút chỉnh sửa thông tin bác sĩ -->
+                                            <span th:if="${u.role.name() == 'DOCTOR'}" class="text-success small">
+                                                <i class="fas fa-check-double"></i> Đã là bác sĩ</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

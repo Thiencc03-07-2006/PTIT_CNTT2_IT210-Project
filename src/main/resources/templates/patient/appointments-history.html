@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: header_head('Lịch sử khám bệnh')}">
+        <meta charset="UTF-8">
+        <title>Lịch sử khám bệnh - Smart Healthcare</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            body {
+                background-color: #f4f7f6;
+            }
+
+            .history-card {
+                border: none;
+                border-radius: 15px;
+            }
+
+            .table thead th {
+                border-top: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar đồng bộ -->
+                <nav th:replace="~{fragments/layout :: sidebar('history')}"></nav>
+
+                <main class="col-md-10 ml-sm-auto px-4 pt-4">
+                    <div class="row justify-content-center">
+                        <div class="col-md-11">
+                            <div class="card history-card shadow">
+                                <div class="card-header bg-white py-3">
+                                    <h4 class="mb-0 text-primary"><i class="fas fa-history mr-2"></i>Lịch sử đặt lịch
+                                        khám</h4>
+                                </div>
+                                <div class="card-body">
+
+                                    <!-- Thông báo nếu có -->
+                                    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+                                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Bác sĩ</th>
+                                                    <th>Chuyên môn</th>
+                                                    <th>Ngày khám</th>
+                                                    <th>Giờ khám</th>
+                                                    <th>Trạng thái</th>
+                                                    <th class="text-center">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="appointment, stat : ${appointments}">
+                                                    <td th:text="${stat.count}" class="align-middle"></td>
+                                                    <td class="align-middle">
+                                                        <strong th:text="${appointment.doctor.user.profile.fullName}"></strong>
+                                                    </td>
+                                                    <!-- Cột chuyên môn mới -->
+                                                    <td class="align-middle"
+                                                        th:text="${appointment.doctor.specialty.name}"></td>
+
+                                                    <td class="align-middle"
+                                                        th:text="${#temporals.format(appointment.appointmentDate, 'dd/MM/yyyy')}"></td>
+                                                    <td class="align-middle" th:text="${appointment.timeSlot}"></td>
+                                                    <td class="align-middle">
+                                                        <span class="badge badge-pill badge-warning px-3 py-2"
+                                                              th:if="${appointment.status.name() == 'PENDING'}">Chờ xác nhận</span>
+                                                        <span class="badge badge-pill badge-success px-3 py-2"
+                                                              th:if="${appointment.status.name() == 'COMPLETED'}">Hoàn thành</span>
+                                                        <span class="badge badge-pill badge-danger px-3 py-2"
+                                                              th:if="${appointment.status.name() == 'CANCELLED'}">Đã hủy</span>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <a th:if="${appointment.status.name() == 'PENDING'}"
+                                                           th:href="@{/appointments/cancel/{id}(id=${appointment.id})}"
+                                                           class="btn btn-outline-danger btn-sm"
+                                                           onclick="return confirm('Bạn có chắc chắn muốn hủy lịch khám này?')">
+                                                            <i class="fas fa-times-circle mr-1"></i> Hủy lịch
+                                                        </a>
+
+                                                        <span th:unless="${appointment.status.name() == 'PENDING'}"
+                                                              class="text-muted small">---</span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr th:if="${#lists.isEmpty(appointments)}">
+                                                    <td colspan="7" class="text-center py-5 text-muted">
+                                                        <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                                                        <p>Bạn chưa có lịch khám nào.</p>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div> <!-- End table-responsive -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

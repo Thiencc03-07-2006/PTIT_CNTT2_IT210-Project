@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: header_head('Hoàn tất ca khám')}">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+
+            .card {
+                border-radius: 12px;
+                border: none;
+            }
+
+            .table-prescription th {
+                background-color: #e9ecef;
+            }
+
+            .section-title {
+                border-left: 4px solid #007bff;
+                padding-left: 10px;
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+            .medicine-unit {
+                background-color: #eee !important;
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .field-error {
+                font-size: 13px;
+                color: #dc3545;
+                margin-top: 4px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+
+                <nav th:replace="~{fragments/layout :: sidebar('doctor-appointments')}"></nav>
+
+                <main class="col-md-10 ml-sm-auto px-4 pt-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="text-primary">
+                            <i class="fas fa-user-md mr-2"></i>
+                            Chi tiết ca khám
+                        </h3>
+
+                        <a th:href="@{/doctor/appointments}"
+                           class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i>
+                            Quay lại
+                        </a>
+                    </div>
+
+                    <!-- ERROR -->
+                    <div th:if="${error}"
+                         class="alert alert-danger alert-dismissible fade show">
+
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+
+                        <span th:text="${error}"></span>
+
+                        <button type="button"
+                                class="close"
+                                data-dismiss="alert">
+                            &times;
+                        </button>
+                    </div>
+
+                    <form th:action="@{/doctor/appointments/complete/{id}(id=${appointmentId})}"
+                          th:object="${completeRequest}"
+                          method="post"
+                          id="medicalForm">
+
+                        <div class="row">
+
+                            <!-- LEFT -->
+                            <div class="col-lg-5">
+
+                                <div class="card shadow-sm mb-4">
+                                    <div class="card-body">
+
+                                        <h5 class="section-title">
+                                            Thông tin bệnh nhân
+                                        </h5>
+
+                                        <p>
+                                            <strong>Bệnh nhân:</strong>
+                                            <span th:text="${patientName}"></span>
+                                        </p>
+
+                                        <p>
+                                            <strong>Ghi chú:</strong>
+
+                                            <span class="text-muted"
+                                                  th:text="${patientNotes}">
+                                            </span>
+                                        </p>
+
+                                        <hr>
+
+                                        <h5 class="section-title">
+                                            Kết quả chẩn đoán
+                                        </h5>
+
+                                        <!-- Symptoms -->
+                                        <div class="form-group">
+
+                                            <label class="font-weight-bold">
+                                                Triệu chứng lâm sàng *
+                                            </label>
+
+                                            <textarea th:field="*{symptoms}"
+                                                      class="form-control"
+                                                      rows="3"
+                                                      placeholder="Nhập triệu chứng..."
+                                                      th:classappend="${#fields.hasErrors('symptoms')} ? 'is-invalid'">
+                                            </textarea>
+
+                                            <div class="invalid-feedback"
+                                                 th:errors="*{symptoms}">
+                                            </div>
+                                        </div>
+
+                                        <!-- Diagnosis -->
+                                        <div class="form-group">
+
+                                            <label class="font-weight-bold">
+                                                Chẩn đoán bệnh *
+                                            </label>
+
+                                            <textarea th:field="*{diagnosis}"
+                                                      class="form-control"
+                                                      rows="3"
+                                                      placeholder="Kết luận bệnh..."
+                                                      th:classappend="${#fields.hasErrors('diagnosis')} ? 'is-invalid'">
+                                            </textarea>
+
+                                            <div class="invalid-feedback"
+                                                 th:errors="*{diagnosis}">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- RIGHT -->
+                            <div class="col-lg-7">
+
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+
+                                        <h5 class="section-title d-flex justify-content-between">
+
+                                            Đơn thuốc
+
+                                            <button type="button"
+                                                    class="btn btn-success btn-sm"
+                                                    onclick="addMedicine()">
+
+                                                <i class="fas fa-plus"></i>
+                                                Thêm thuốc
+                                            </button>
+                                        </h5>
+
+                                        <!-- LIST ERROR -->
+                                        <div th:if="${#fields.hasErrors('medicines')}"
+                                             class="text-danger small mb-2">
+
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            Vui lòng kiểm tra lại danh sách thuốc.
+                                        </div>
+
+                                        <div class="table-responsive">
+
+                                            <table class="table table-bordered table-prescription">
+
+                                                <thead>
+                                                    <tr>
+                                                        <th>Tên thuốc</th>
+                                                        <th style="width: 80px;">ĐVT</th>
+                                                        <th style="width: 80px;">SL</th>
+                                                        <th>Hướng dẫn sử dụng</th>
+                                                        <th style="width: 45px;"></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody id="prescriptionBody">
+
+                                                    <tr class="medicine-row">
+
+                                                        <!-- MEDICINE -->
+                                                        <td>
+
+                                                            <select name="medicines[0].medicineId"
+                                                                    class="form-control select-medicine"
+                                                                    onchange="updateUnit(this)">
+
+                                                                <option value="" data-unit="-">
+                                                                    -- Chọn thuốc --
+                                                                </option>
+
+                                                                <option th:each="m : ${allMedicines}"
+                                                                        th:value="${m.id}"
+                                                                        th:data-unit="${m.unit}"
+                                                                        th:text="${m.name + ' (Kho: ' + m.stockQuantity + ')'}">
+                                                                </option>
+
+                                                            </select>
+
+                                                            <div class="field-error"
+                                                                 th:errors="*{medicines[0].medicineId}">
+                                                            </div>
+
+                                                        </td>
+
+                                                        <!-- UNIT -->
+                                                        <td>
+                                                            <input type="text"
+                                                                   class="form-control medicine-unit"
+                                                                   value="-"
+                                                                   readonly>
+                                                        </td>
+
+                                                        <!-- QUANTITY -->
+                                                        <td>
+
+                                                            <input type="number"
+                                                                   name="medicines[0].quantity"
+                                                                   class="form-control"
+                                                                   min="1"
+                                                                   value="1">
+
+                                                            <div class="field-error"
+                                                                 th:errors="*{medicines[0].quantity}">
+                                                            </div>
+
+                                                        </td>
+
+                                                        <!-- USAGE -->
+                                                        <td>
+
+                                                            <input type="text"
+                                                                   name="medicines[0].usageInstruction"
+                                                                   class="form-control"
+                                                                   placeholder="Cách dùng...">
+
+                                                            <div class="field-error"
+                                                                 th:errors="*{medicines[0].usageInstruction}">
+                                                            </div>
+
+                                                        </td>
+
+                                                        <!-- DELETE -->
+                                                        <td>
+
+                                                            <button type="button"
+                                                                    class="btn btn-outline-danger btn-sm border-0"
+                                                                    onclick="removeRow(this)">
+
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                        <hr>
+
+                                        <button type="submit"
+                                                class="btn btn-primary btn-block btn-lg shadow">
+
+                                            <i class="fas fa-save mr-2"></i>
+                                            Xác nhận & Hoàn tất
+
+                                        </button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </main>
+
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+        <script>
+
+            let rowIdx = 1;
+
+            function updateUnit(selectElement) {
+
+                const selectedOption =
+                    selectElement.options[selectElement.selectedIndex];
+
+                const unit =
+                    selectedOption.getAttribute('data-unit') || '-';
+
+                selectElement.closest('tr')
+                    .querySelector('.medicine-unit')
+                    .value = unit;
+            }
+
+            function addMedicine() {
+
+                const tbody =
+                    document.getElementById('prescriptionBody');
+
+                const firstRowSelect =
+                    document.querySelector('.select-medicine').innerHTML;
+
+                const newRow = document.createElement('tr');
+
+                newRow.className = 'medicine-row';
+
+                newRow.innerHTML = `
+
+                <td>
+
+                    <select name="medicines[${rowIdx}].medicineId"
+                            class="form-control select-medicine"
+                            onchange="updateUnit(this)">
+
+                        ${firstRowSelect}
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <input type="text"
+                           class="form-control medicine-unit"
+                           value="-"
+                           readonly>
+
+                </td>
+
+                <td>
+
+                    <input type="number"
+                           name="medicines[${rowIdx}].quantity"
+                           class="form-control"
+                           min="1"
+                           value="1">
+
+                </td>
+
+                <td>
+
+                    <input type="text"
+                           name="medicines[${rowIdx}].usageInstruction"
+                           class="form-control"
+                           placeholder="Cách dùng...">
+
+                </td>
+
+                <td>
+
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm border-0"
+                            onclick="removeRow(this)">
+
+                        <i class="fas fa-trash"></i>
+
+                    </button>
+
+                </td>
+            `;
+
+                tbody.appendChild(newRow);
+
+                rowIdx++;
+            }
+
+            function removeRow(btn) {
+
+                const rows =
+                    document.querySelectorAll('.medicine-row');
+
+                if (rows.length > 1) {
+
+                    btn.closest('tr').remove();
+
+                    reIndexRows();
+
+                } else {
+
+                    alert("Đơn thuốc phải có ít nhất một loại thuốc.");
+                }
+            }
+
+            function reIndexRows() {
+
+                const rows =
+                    document.querySelectorAll('.medicine-row');
+
+                rows.forEach((row, index) => {
+
+                    row.querySelector('select').name =
+                        `medicines[${index}].medicineId`;
+
+                    const quantityInput =
+                        row.querySelector('input[type="number"]');
+
+                    const instructionInput =
+                        row.querySelector('input[placeholder="Cách dùng..."]');
+
+                    if (quantityInput) {
+                        quantityInput.name =
+                            `medicines[${index}].quantity`;
+                    }
+
+                    if (instructionInput) {
+                        instructionInput.name =
+                            `medicines[${index}].usageInstruction`;
+                    }
+                });
+
+                rowIdx = rows.length;
+            }
+
+            // SUBMIT VALIDATE
+            document.getElementById('medicalForm')
+                .addEventListener('submit', function (e) {
+
+                    const selects =
+                        document.querySelectorAll('.select-medicine');
+
+                    const values =
+                        Array.from(selects)
+                            .map(s => s.value)
+                            .filter(v => v !== "");
+
+                    // duplicate medicine
+                    if (new Set(values).size !== values.length) {
+
+                        e.preventDefault();
+
+                        alert("Lỗi: Bạn kê trùng thuốc trong cùng một đơn.");
+
+                        return;
+                    }
+
+                    // empty medicine
+                    if (values.length === 0) {
+
+                        e.preventDefault();
+
+                        alert("Vui lòng chọn ít nhất một loại thuốc.");
+                    }
+                });
+        </script>
+    </body>
+</html>

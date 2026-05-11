@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: header_head('Chi tiết đơn thuốc')}">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <nav th:replace="~{fragments/layout :: sidebar('prescriptions')}"></nav>
+                <main class="col-md-10 ml-sm-auto px-4 pt-4">
+                    <div class="row">
+                        <div class="col-12">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb bg-transparent p-0">
+                                    <li class="breadcrumb-item"><a th:href="@{/doctor/prescriptions}">Đơn thuốc</a></li>
+                                    <li class="breadcrumb-item active">Chi tiết đơn #<span th:text="${prescription.id}"></span></li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-header bg-primary text-white font-weight-bold py-3">
+                                    <i class="fas fa-user-injured mr-2"></i> Thông tin bệnh nhân
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1 text-muted small text-uppercase font-weight-bold">Họ và tên</p>
+                                    <h5 class="mb-3" th:text="${prescription.medicalRecord.appointment.patient.profile.fullName}">Nguyễn Văn A</h5>
+
+                                    <p class="mb-1 text-muted small text-uppercase font-weight-bold">Chẩn đoán</p>
+                                    <p class="mb-3 font-italic" th:text="${prescription.medicalRecord.diagnosis}">Cảm cúm</p>
+
+                                    <p class="mb-1 text-muted small text-uppercase font-weight-bold">Bác sĩ kê đơn</p>
+                                    <p class="mb-0" th:text="${prescription.medicalRecord.appointment.doctor.user.profile.fullName}">BS. Trần B</p>
+                                </div>
+                            </div>
+
+                            <a th:href="@{/doctor/prescriptions}" class="btn btn-outline-secondary btn-block">
+                                <i class="fas fa-chevron-left mr-1"></i> Quay lại danh sách
+                            </a>
+                        </div>
+
+                        <div class="col-md-8">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header bg-white py-3">
+                                    <h5 class="mb-0 text-dark font-weight-bold"><i class="fas fa-list-ul mr-2 text-primary"></i>Danh sách thuốc</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table mb-0">
+                                            <thead class="bg-light text-muted small uppercase">
+                                                <tr>
+                                                    <th>Tên thuốc</th>
+                                                    <th class="text-center">Kê đơn</th>
+                                                    <th class="text-center">Tồn kho</th>
+                                                    <th>Cách dùng</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="detail : ${prescription.prescriptionDetails}">
+                                                    <td class="font-weight-bold align-middle" th:text="${detail.medicine.name}">Paracetamol</td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="badge badge-info px-3 py-2" th:text="${detail.quantity}">10</span>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span th:text="${detail.medicine.stockQuantity}"
+                                                              th:classappend="${detail.medicine.stockQuantity < detail.quantity} ? 'text-danger font-weight-bold' : 'text-success'">
+                                                        </span>
+                                                    </td>
+                                                    <td class="align-middle text-muted" th:text="${detail.usageInstruction}">Sáng 1 viên, tối 1 viên</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white py-4">
+                                    <!-- Trạng thái hoàn thành -->
+                                    <div th:if="${prescription.status.name() == 'COMPLETED'}" class="alert alert-success d-flex align-items-center mb-0 shadow-sm">
+                                        <i class="fas fa-check-circle fa-2x mr-3"></i>
+                                        <div>
+                                            <strong>Hoàn tất!</strong> Đơn thuốc này đã được phát cho bệnh nhân.
+                                        </div>
+                                    </div>
+
+                                    <!-- Nút xác nhận -->
+                                    <div th:if="${prescription.status.name() == 'PENDING'}">
+                                        <form th:action="@{/doctor/prescriptions/dispense/{id}(id=${prescription.id})}" method="post"
+                                              onsubmit="return confirm('Xác nhận phát thuốc và trừ số lượng trong kho?');">
+                                            <button type="submit" class="btn btn-success btn-lg btn-block shadow">
+                                                <i class="fas fa-check-circle mr-2"></i> Xác nhận phát thuốc ngay
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

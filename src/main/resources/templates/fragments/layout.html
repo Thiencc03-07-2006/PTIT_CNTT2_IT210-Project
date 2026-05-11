@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:fragment="header_head(title)">
+        <meta charset="UTF-8">
+        <title th:text="${title} + ' - Smart Healthcare'"></title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            body { background-color: #f4f7f6; }
+            .sidebar { min-height: 100vh; background: #fff; border-right: 1px solid #dee2e6; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
+            .nav-link { color: #444; font-weight: 500; padding: 12px 20px; transition: 0.3s; }
+            .nav-link:hover { background: #f8f9fa; color: #007bff; padding-left: 25px; }
+            .nav-link.active { background: #e9ecef; color: #007bff; border-right: 4px solid #007bff; }
+            .menu-label { font-size: 0.75rem; text-transform: uppercase; color: #999; font-weight: bold; padding: 15px 20px 5px; }
+        </style>
+    </head>
+
+    <body>
+        <nav th:fragment="sidebar(activePage)" class="col-md-2 d-none d-md-block sidebar px-0">
+            <div class="p-4">
+                <h5 class="text-primary font-weight-bold"><i class="fas fa-heartbeat mr-2"></i>Smart Health</h5>
+            </div>
+
+            <ul class="nav flex-column">
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" th:classappend="${activePage == 'dashboard' ? 'active' : ''}" href="/dashboard">-->
+<!--                        <i class="fas fa-chart-line mr-2"></i> Tổng quan-->
+<!--                    </a>-->
+<!--                </li>-->
+
+                <th:block th:if="${session.user.role.name() == 'PATIENT'}">
+                    <div class="menu-label">Dịch vụ của tôi</div>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'booking' ? 'active' : ''}" href="/appointments/book">
+                            <i class="fas fa-calendar-plus mr-2"></i> Đặt lịch khám
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'history' ? 'active' : ''}" href="/appointments/history">
+                            <i class="fas fa-history mr-2"></i> Lịch sử khám
+                        </a>
+                    </li>
+                </th:block>
+
+                <th:block th:if="${session.user.role.name() == 'DOCTOR'}">
+                    <div class="menu-label">Nghiệp vụ bác sĩ</div>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'schedule' ? 'active' : ''}" href="/doctor/appointments">
+                            <i class="fas fa-user-md mr-2"></i> Lịch khám hôm nay
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'patients' ? 'active' : ''}" href="/doctor/patients">
+                            <i class="fas fa-users mr-2"></i> Quản lý bệnh nhân
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'prescriptions' ? 'active' : ''}" href="/doctor/prescriptions">
+                            <i class="fas fa-file-medical mr-2"></i> Cấp phát thuốc
+                        </a>
+                    </li>
+                </th:block>
+
+                <th:block th:if="${session.user.role.name() == 'ADMIN'}">
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'dashboard' ? 'active' : ''}" href="/dashboard">
+                            <i class="fas fa-chart-line mr-2"></i> Tổng quan
+                        </a>
+                    </li>
+                    <div class="menu-label">Hệ thống quản trị</div>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'users' ? 'active' : ''}" href="/admin/users">
+                            <i class="fas fa-user-cog mr-2"></i> Quản lý người dùng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'medicine' ? 'active' : ''}" href="/admin/medicines">
+                            <i class="fas fa-pills mr-2"></i> Quản lý kho thuốc
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'specialties' ? 'active' : ''}" href="/admin/specialties">
+                            <i class="fas fa-stethoscope mr-2"></i> Quản lý chuyên khoa
+                        </a>
+                    </li>
+                </th:block>
+
+                <div class="border-top mt-3"></div>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'profile' ? 'active' : ''}" href="/profile">
+                        <i class="fas fa-user-circle mr-2"></i> Hồ sơ cá nhân
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="/logout">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: header_head('Nâng cấp Bác sĩ')}"></head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <nav th:replace="~{fragments/layout :: sidebar('users')}"></nav>
+                <main class="col-md-10 ml-sm-auto px-4 pt-4">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header bg-white py-3">
+                                    <h4 class="mb-0 text-primary"><i class="fas fa-user-md mr-2"></i>Bổ sung thông tin bác sĩ</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form th:action="@{/admin/users/upgrade}" th:object="${upgradeRequest}" method="post">
+                                        <input type="hidden" name="userId" th:value="${userId}">
+
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Chuyên khoa</label>
+                                            <select th:field="*{specialtyId}" class="form-control" required>
+                                                <option value="">-- Chọn chuyên khoa --</option>
+                                                <option th:each="sp : ${specialties}" th:value="${sp.id}" th:text="${sp.name}"></option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Số năm kinh nghiệm</label>
+                                            <input type="number" th:field="*{experienceYears}" class="form-control" min="0" placeholder="VD: 5">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Tiểu sử / Giới thiệu</label>
+                                            <textarea th:field="*{bio}" class="form-control" rows="4" placeholder="Giới thiệu ngắn về trình độ chuyên môn..."></textarea>
+                                        </div>
+
+                                        <hr>
+                                        <div class="d-flex justify-content-between">
+                                            <a th:href="@{/admin/users}" class="btn btn-secondary">Hủy bỏ</a>
+                                            <button type="submit" class="btn btn-success px-5 shadow-sm">
+                                                <i class="fas fa-check-circle mr-2"></i>Xác nhận nâng cấp
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,6 +1,6 @@
 package com.healthcare.service.impl;
 
-import com.healthcare.model.dto.response.MedicineDTO;
+import com.healthcare.model.dto.request.MedicineDTO;
 import com.healthcare.model.entity.Medicine;
 import com.healthcare.repository.MedicineRepository;
 import com.healthcare.service.MedicineService;

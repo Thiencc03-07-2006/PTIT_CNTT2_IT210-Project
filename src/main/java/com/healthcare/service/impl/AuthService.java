@@ -1,6 +1,6 @@
 package com.healthcare.service.impl;
 
-import com.healthcare.model.dto.request.UpgradeDoctorRequest;
+import com.healthcare.model.dto.request.UpgradeDoctorRequestDTO;
 import com.healthcare.model.dto.request.UserRegistrationDTO;
 import com.healthcare.model.entity.*;
 import com.healthcare.repository.DoctorRepository;
@@ -75,7 +75,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void upgradeToDoctor(UpgradeDoctorRequest request) {
+    public void upgradeToDoctor(UpgradeDoctorRequestDTO request) {
         // 1. Tìm User
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));

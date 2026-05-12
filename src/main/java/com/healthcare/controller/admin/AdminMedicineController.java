@@ -1,6 +1,6 @@
 package com.healthcare.controller.admin;
 
-import com.healthcare.model.dto.response.MedicineDTO;
+import com.healthcare.model.dto.request.MedicineDTO;
 import com.healthcare.service.MedicineService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SpecialtyRepository extends JpaRepository<Specialty, Long> {
-    // Các phương thức cơ bản findAll, findById đã được hỗ trợ sẵn
+    boolean existsByName(String name);
 }

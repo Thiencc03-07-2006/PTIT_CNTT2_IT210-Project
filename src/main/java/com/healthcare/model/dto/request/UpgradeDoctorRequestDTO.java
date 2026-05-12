@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class UpgradeDoctorRequest {
+public class UpgradeDoctorRequestDTO {
     @NotNull(message = "ID người dùng không được để trống")
     private Long userId;
 

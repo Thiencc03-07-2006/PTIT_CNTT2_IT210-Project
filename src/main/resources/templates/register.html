@@ -5,94 +5,77 @@
         <title>Đăng ký tài khoản - Smart Healthcare</title>
         <!-- Bootstrap 4.6.2 CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
-            body {
-                background-color: #f4f7f6;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-            }
-
-            .card-register {
-                border: none;
-                border-radius: 12px;
-            }
-
-            .text-primary-custom {
-                color: #007bff;
-            }
-
-            .form-control {
-                border-radius: 8px;
-            }
-
-            .btn-register {
-                border-radius: 8px;
-                padding: 12px;
-                font-weight: 600;
-            }
+            body { background-color: #f4f7f6; min-height: 100vh; display: flex; align-items: center; }
+            .register-card { border: none; border-radius: 15px; }
+            .form-control { border-radius: 8px; }
+            .btn-register { border-radius: 8px; font-weight: 600; }
         </style>
     </head>
-    <body class="bg-light">
+    <body>
         <div class="container py-5">
             <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-10">
-                    <div class="card card-register shadow-sm">
-                        <div class="card-body p-5">
-                            <h3 class="text-center text-primary font-weight-bold mb-4">Tạo Tài Khoản Mới</h3>
-
-                            <!-- Báo lỗi chung -->
-                            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-                                <span th:text="${errorMessage}"></span>
-                            </div>
+                <div class="col-md-8">
+                    <div class="card register-card shadow">
+                        <div class="card-header bg-white py-3">
+                            <h4 class="mb-0 text-primary text-center">
+                                <i class="fas fa-user-plus mr-2"></i>Tạo Tài Khoản Mới
+                            </h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Thông báo lỗi chung từ Server (FlashAttributes) -->
+                            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+                            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 
                             <form th:action="@{/register}" th:object="${userDto}" method="post">
                                 <input type="hidden" th:field="*{role}">
-                                <div class="form-row">
-                                    <!-- USERNAME -->
-                                    <div class="form-group col-md-6">
+
+                                <div class="row">
+                                    <!-- 1. Tên đăng nhập -->
+                                    <div class="col-md-6 form-group">
                                         <label class="font-weight-bold">Tên đăng nhập</label>
                                         <input type="text" class="form-control" placeholder="VD: nguyenvanan"
                                                th:field="*{username}"
                                                th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
-                                             th:errors="*{username}"></div>
+                                             th:text="${#fields.errors('username').get(0)}"></div>
                                     </div>
 
-                                    <!-- PASSWORD -->
-                                    <div class="form-group col-md-6">
+                                    <!-- 2. Mật khẩu -->
+                                    <div class="col-md-6 form-group">
                                         <label class="font-weight-bold">Mật khẩu</label>
                                         <input type="password" class="form-control" placeholder="********"
                                                th:field="*{password}"
                                                th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
-                                             th:errors="*{password}"></div>
+                                             th:text="${#fields.errors('password').get(0)}"></div>
                                     </div>
                                 </div>
 
-                                <!-- FULLNAME -->
+                                <!-- 3. Họ và tên -->
                                 <div class="form-group">
                                     <label class="font-weight-bold">Họ và tên</label>
                                     <input type="text" class="form-control" placeholder="Nhập đầy đủ họ tên"
                                            th:field="*{fullName}"
                                            th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''">
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}"
-                                         th:errors="*{fullName}"></div>
+                                         th:text="${#fields.errors('fullName').get(0)}"></div>
                                 </div>
 
-                                <div class="form-row">
-                                    <!-- PHONE -->
-                                    <div class="form-group col-md-6">
+                                <div class="row">
+                                    <!-- 4. Số điện thoại -->
+                                    <div class="col-md-6 form-group">
                                         <label class="font-weight-bold">Số điện thoại</label>
                                         <input type="text" class="form-control" placeholder="0987654321"
                                                th:field="*{phone}"
                                                th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''">
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}"
-                                             th:errors="*{phone}"></div>
+                                             th:text="${#fields.errors('phone').get(0)}"></div>
                                     </div>
 
-                                    <!-- GENDER -->
-                                    <div class="form-group col-md-6">
+                                    <!-- 5. Giới tính -->
+                                    <div class="col-md-6 form-group">
                                         <label class="font-weight-bold">Giới tính</label>
                                         <select class="form-control" th:field="*{gender}"
                                                 th:classappend="${#fields.hasErrors('gender')} ? 'is-invalid' : ''">
@@ -102,34 +85,21 @@
                                             <option value="OTHER">Khác</option>
                                         </select>
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('gender')}"
-                                             th:errors="*{gender}"></div>
+                                             th:text="${#fields.errors('gender').get(0)}"></div>
                                     </div>
                                 </div>
 
-<!--                                &lt;!&ndash; ROLE &ndash;&gt;-->
-<!--                                <div class="form-group">-->
-<!--                                    <label class="font-weight-bold">Vai trò người dùng</label>-->
-<!--                                    <select class="form-control" th:field="*{role}"-->
-<!--                                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">-->
-<!--                                        <option value="PATIENT">Bệnh nhân (Đặt lịch & Xem bệnh án)</option>-->
-<!--                                        <option value="DOCTOR">Bác sĩ (Khám bệnh & Kê đơn)</option>-->
-<!--                                    </select>-->
-<!--                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}"-->
-<!--                                         th:errors="*{role}"></div>-->
-<!--                                    <small class="form-text text-muted">Lưu ý: Quyền hạn sẽ được áp dụng ngay sau khi-->
-<!--                                        đăng ký.</small>-->
-<!--                                </div>-->
-
-                                <button type="submit" class="btn btn-primary btn-block shadow-sm mt-4 btn-register">
+                                <hr>
+                                <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm btn-register">
                                     Đăng ký ngay
                                 </button>
                             </form>
 
-                            <hr>
-                            <p class="text-center mt-3 small">
-                                Đã có tài khoản? <a th:href="@{/login}" class="text-primary font-weight-bold">Đăng nhập
-                                tại đây</a>
-                            </p>
+                            <div class="text-center mt-4">
+                                <p class="mb-0">Đã có tài khoản?
+                                    <a th:href="@{/login}" class="text-primary font-weight-bold">Đăng nhập tại đây</a>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 package com.healthcare.controller.admin;
 
-import com.healthcare.model.dto.request.UpgradeDoctorRequest;
+import com.healthcare.model.dto.request.UpgradeDoctorRequestDTO;
 import com.healthcare.repository.SpecialtyRepository;
 import com.healthcare.repository.UserRepository;
 import com.healthcare.service.impl.AuthService;
@@ -29,7 +29,7 @@ public class AdminUserController {
     // Trang hiển thị form bổ sung thông tin bác sĩ
     @GetMapping("/upgrade/{id}")
     public String showUpgradeForm(@PathVariable Long id, Model model) {
-        UpgradeDoctorRequest upgradeRequest = new UpgradeDoctorRequest();
+        UpgradeDoctorRequestDTO upgradeRequest = new UpgradeDoctorRequestDTO();
         upgradeRequest.setUserId(id);
         model.addAttribute("specialties", specialtyRepository.findAll());
         model.addAttribute("upgradeRequest", upgradeRequest);
@@ -37,7 +37,7 @@ public class AdminUserController {
     }
 
     @PostMapping("/upgrade")
-    public String processUpgrade(@Valid @ModelAttribute("upgradeRequest") UpgradeDoctorRequest request, BindingResult bindingResult, RedirectAttributes ra, Model model) {
+    public String processUpgrade(@Valid @ModelAttribute("upgradeRequest") UpgradeDoctorRequestDTO request, BindingResult bindingResult, RedirectAttributes ra, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("specialties", specialtyRepository.findAll());
             return "admin/upgrade-doctor";

@@ -1,4 +1,4 @@
-package com.healthcare.model.dto.response;
+package com.healthcare.model.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;

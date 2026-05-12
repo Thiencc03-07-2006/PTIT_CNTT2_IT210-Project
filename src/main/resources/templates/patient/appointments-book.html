@@ -46,7 +46,7 @@
                                                     </option>
                                                 </select>
                                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('specialtyId')}"
-                                                     th:text="${#fields.errors('specialtyId')[0]}"></div>
+                                                     th:text="${#fields.errors('specialtyId').get(0)}"></div>
                                             </div>
 
                                             <!-- 2. Chọn bác sĩ -->
@@ -61,7 +61,7 @@
                                                     </option>
                                                 </select>
                                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('doctorId')}"
-                                                     th:text="${#fields.errors('doctorId')[0]}"></div>
+                                                     th:text="${#fields.errors('doctorId').get(0)}"></div>
                                             </div>
                                         </div>
 
@@ -72,7 +72,7 @@
                                                 <input type="date" class="form-control" th:field="*{appointmentDate}"
                                                        th:classappend="${#fields.hasErrors('appointmentDate')} ? 'is-invalid' : ''">
                                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('appointmentDate')}"
-                                                     th:text="${#fields.errors('appointmentDate')[0]}"></div>
+                                                     th:text="${#fields.errors('appointmentDate').get(0)}"></div>
                                             </div>
 
                                             <!-- 4. Chọn Khung giờ -->
@@ -88,7 +88,7 @@
                                                     <option value="15:00">03:00 PM</option>
                                                 </select>
                                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('appointmentTime')}"
-                                                     th:text="${#fields.errors('appointmentTime')[0]}"></div>
+                                                     th:text="${#fields.errors('appointmentTime').get(0)}"></div>
                                             </div>
                                         </div>
 
@@ -99,7 +99,7 @@
                                                       placeholder="Nhập tình trạng sức khỏe hiện tại của bạn..."
                                                       th:classappend="${#fields.hasErrors('notes')} ? 'is-invalid' : ''"></textarea>
                                             <div class="invalid-feedback" th:if="${#fields.hasErrors('notes')}"
-                                                 th:text="${#fields.errors('notes')[0]}"></div>
+                                                 th:text="${#fields.errors('notes').get(0)}"></div>
                                         </div>
 
                                         <hr>

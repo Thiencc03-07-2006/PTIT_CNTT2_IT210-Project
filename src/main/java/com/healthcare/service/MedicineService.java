@@ -1,6 +1,6 @@
 package com.healthcare.service;
 
-import com.healthcare.model.dto.response.MedicineDTO;
+import com.healthcare.model.dto.request.MedicineDTO;
 
 import java.util.List;
 
